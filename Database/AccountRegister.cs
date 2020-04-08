@@ -16,10 +16,16 @@ namespace ShoppingCart.Database
             user1.UserId = "John";
             user1.Password = "123";
             dbcontext.Add(user1);
+            dbcontext.SaveChanges();
+
             user1.UserId = "Mary";
             dbcontext.Add(user1);
+            dbcontext.SaveChanges();
+
             user1.UserId = "Chris";
             dbcontext.Add(user1);
+            dbcontext.SaveChanges();
+
             user1.UserId = "Martini";
             dbcontext.Add(user1);
 
