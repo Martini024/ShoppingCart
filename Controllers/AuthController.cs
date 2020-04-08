@@ -13,11 +13,11 @@ using ShoppingCart.Database;
 
 namespace ShoppingCart.Controllers
 {
-    public class LoginController : Controller
+    public class AuthController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
+        private readonly ILogger<AuthController> _logger;
         private ShoppingCartContext _dbContext;
-        public LoginController(ILogger<LoginController> logger, ShoppingCartContext dbContext)
+        public AuthController(ILogger<AuthController> logger, ShoppingCartContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -31,7 +31,7 @@ namespace ShoppingCart.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string userName, string password)
         {
-            bool isRegistered = _dbContext.Users.Where(user => user.Id == userName && user.Password == password).Any();
+            bool isRegistered = _dbContext.Users.Where(user => user.UserId == userName && user.Password == password).Any();
             if (isRegistered == true)
             {
                 var claims = new List<Claim>{
@@ -41,7 +41,7 @@ namespace ShoppingCart.Controllers
                 var principal = new ClaimsPrincipal(identity);
                 var props = new AuthenticationProperties();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
-                return RedirectToAction("Index", "i");
+                return RedirectToAction("Index", "Product");
             }
             else
                 return View();
