@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using ShoppingCart.Database;
 
 namespace ShoppingCart
 {
@@ -29,10 +31,11 @@ namespace ShoppingCart
                 option.LoginPath = "/Home/Login";
             });
             services.AddControllersWithViews();
+            services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -59,6 +62,9 @@ namespace ShoppingCart
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Database.EnsureCreated();
         }
     }
 }
