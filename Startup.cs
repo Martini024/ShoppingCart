@@ -28,7 +28,7 @@ namespace ShoppingCart
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
             {
-                option.LoginPath = "/Home/Login";
+                option.LoginPath = "/Auth/Login";
             });
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
@@ -43,7 +43,7 @@ namespace ShoppingCart
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Auth/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -63,9 +63,9 @@ namespace ShoppingCart
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Database.EnsureCreated();
-            new AccountRegister(_dbContext);
+            // _dbContext.Database.EnsureDeleted();
+            // _dbContext.Database.EnsureCreated();
+            // new AccountRegister(_dbContext);
         }
     }
 }
