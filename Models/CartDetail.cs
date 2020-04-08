@@ -8,15 +8,17 @@ namespace ShoppingCart.Models
     public class CartDetail
     {
         [Required]
-        [Key, Column(Order = 0)]
-        public string UserId { get; set; }
+        [MaxLength(36)]
+        public string CartId { get; set; }
 
         [Required]
-        [Key, Column(Order = 1)]
+        [MaxLength(36)]
         public string ProductId { get; set; }
 
         [Required]
         public int Qty { get; set; }
 
+        public virtual Cart Cart { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

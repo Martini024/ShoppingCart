@@ -8,14 +8,16 @@ namespace ShoppingCart.Models
     public class Activation
     {
         [Required]
-        [Key, Column(Order = 0)]
+        [MaxLength(36)]
         public string ProductId { get; set; }
 
         [Required]
-        [Key, Column(Order = 1)]
         public string Code { get; set; }
 
+        [MaxLength(36)]
         public string OrderId { get; set; }
 
+        public virtual Order Order { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

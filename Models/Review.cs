@@ -8,23 +8,24 @@ namespace ShoppingCart.Models
     public class Review
     {
         [Required]
-        [Key, Column(Order = 0)]
+        [MaxLength(36)]
         public string UserId { get; set; }
 
         [Required]
-        [Key, Column(Order = 1)]
-
+        [MaxLength(36)]
         public string ProductId { get; set; }
 
         [Required]
-        [Key, Column(Order = 2)]
-
         public DateTime UtcDateTime { get; set; }
 
         [Required]
         public int Rating { get; set; }
 
         [Required]
+        [MaxLength(140)]
         public string Comment { get; set; }
+
+        public virtual User User { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

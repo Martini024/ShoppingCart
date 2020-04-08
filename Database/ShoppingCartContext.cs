@@ -18,6 +18,13 @@ namespace ShoppingCart.Database
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OrderDetail>().HasKey(tbl => new { tbl.OrderId, tbl.ProductId });
+            modelBuilder.Entity<CartDetail>().HasKey(tbl => new { tbl.CartId, tbl.ProductId });
+            modelBuilder.Entity<Activation>().HasKey(tbl => new { tbl.ProductId, tbl.Code });
+            modelBuilder.Entity<Review>().HasKey(tbl => new { tbl.UserId, tbl.ProductId, tbl.UtcDateTime });
+        }
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Activation> Activations { get; set; }

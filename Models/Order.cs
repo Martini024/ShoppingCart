@@ -8,13 +8,19 @@ namespace ShoppingCart.Models
     public class Order
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string Id { get; set; }
+        [MaxLength(36)]
+        public string OrderId { get; set; }
 
         [Required]
+        [MaxLength(36)]
         public string UserId { get; set; }
 
         [Required]
         public DateTime UtcDateTime { get; set; }
+
+        public virtual User User { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<Activation> Activations { get; set; }
 
     }
 }

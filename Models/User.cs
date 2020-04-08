@@ -8,9 +8,15 @@ namespace ShoppingCart.Models
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string Id { get; set; }
+        [MaxLength(36)]
+        public string UserId { get; set; }
 
         [Required]
+        [MaxLength(36)]
+
         public string Password { get; set; }
+        public virtual Cart Cart { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }

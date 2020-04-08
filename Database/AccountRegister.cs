@@ -13,14 +13,14 @@ namespace ShoppingCart.Database
         {
             // Generate hard-coded 4 users sharing 123 as password
             User user1 = new User();
-            user1.Id = "John";
+            user1.UserId = "John";
             user1.Password = "123";
             dbcontext.Add(user1);
-            user1.Id = "Mary";
+            user1.UserId = "Mary";
             dbcontext.Add(user1);
-            user1.Id = "Chris";
+            user1.UserId = "Chris";
             dbcontext.Add(user1);
-            user1.Id = "Martini";
+            user1.UserId = "Martini";
             dbcontext.Add(user1);
 
             dbcontext.SaveChanges();
