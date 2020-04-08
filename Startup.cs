@@ -65,6 +65,7 @@ namespace ShoppingCart
 
             _dbContext.Database.EnsureDeleted();
             _dbContext.Database.EnsureCreated();
+            new AccountRegister(_dbContext);
         }
     }
 }
