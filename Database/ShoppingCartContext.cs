@@ -18,24 +18,13 @@ namespace ShoppingCart.Database
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder model)
-        {
-            // // unique name within a column
-            // model.Entity<Cinema>().HasIndex(tbl => tbl.Name).IsUnique();
-
-            // // composite keys
-            // model.Entity<Seat>().HasAlternateKey(tbl =>
-            //     new { tbl.ScreeningId, tbl.Row, tbl.Col }
-            // );
-        }
-
         public DbSet<User> Users { get; set; }
-        // public DbSet<BookedSeat> BookedSeats { get; set; }
-        // public DbSet<ReservedSeat> ReservedSeats { get; set; }
-
-        // public DbSet<Movie> Movies { get; set; }
-        // public DbSet<Screening> Screenings { get; set; }
-        // public DbSet<Cinema> Cinemas { get; set; }
-        // public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Activation> Activations { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartDetail> CartDetails { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
     }
 }
