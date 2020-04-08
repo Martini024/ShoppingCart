@@ -13,19 +13,14 @@ using ShoppingCart.Database;
 
 namespace ShoppingCart.Controllers
 {
-    public class HomeController : Controller
+    public class LoginController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<LoginController> _logger;
         private ShoppingCartContext _dbContext;
-        public HomeController(ILogger<HomeController> logger, ShoppingCartContext dbContext)
+        public LoginController(ILogger<LoginController> logger, ShoppingCartContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         public IActionResult Login()
@@ -36,13 +31,8 @@ namespace ShoppingCart.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string userName, string password)
         {
-            _dbContext.Users.Add(new User()
-            {
-                Id = userName,
-                Password = password
-            });
-            _dbContext.SaveChanges();
-            if (userName.ToLower() == "admin" && password == "123")
+            bool isRegistered = _dbContext.Users.Where(user => user.Id == userName && user.Password == password).Any();
+            if (isRegistered == true)
             {
                 var claims = new List<Claim>{
                     new Claim(ClaimTypes.Name,userName)
@@ -51,7 +41,7 @@ namespace ShoppingCart.Controllers
                 var principal = new ClaimsPrincipal(identity);
                 var props = new AuthenticationProperties();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Index", "i");
             }
             else
                 return View();
