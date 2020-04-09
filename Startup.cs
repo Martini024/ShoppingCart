@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Database;
+using ShoppingCart.Models;
 
 namespace ShoppingCart
 {
@@ -28,10 +29,13 @@ namespace ShoppingCart
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
             {
-                option.LoginPath = "/Auth/Login";
+                option.LoginPath = "/Auth";
             });
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
+
+            services.AddSingleton<Cart>();
+            services.AddSingleton<CartDetail>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +69,7 @@ namespace ShoppingCart
 
             // _dbContext.Database.EnsureDeleted();
             // _dbContext.Database.EnsureCreated();
-            // new AccountRegister(_dbContext);
+            // new MockData(_dbContext);
         }
     }
 }
