@@ -23,7 +23,7 @@ namespace ShoppingCart.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }

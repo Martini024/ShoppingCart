@@ -1,0 +1,25 @@
+@{
+    Layout= "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Purchase";
+    ViewBag.Inline1 = "Home";
+    ViewBag.Controller1 = "Product";
+    ViewBag.Action1 = "Index";
+    ViewBag.Inline2 = "Logout";
+    ViewBag.Controller2 = "Auth";
+    ViewBag.Action2 = "Logout";
+    ViewBag.Method2 = "POST";
+}
+
+@section Title {
+    <a class="navbar-brand" href="#">My Purchase</a>
+}
+
+@section NavLink1 {
+    <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Home</a>
+}
+
+@section NavLink2 {
+    <form method="POST" asp-controller="Auth" asp-action="Logout">
+        <button class="btn text-dark shadow-none" >Logout</button>
+    </form>
+}
