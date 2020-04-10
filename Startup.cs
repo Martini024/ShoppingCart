@@ -31,11 +31,10 @@ namespace ShoppingCart
             {
                 option.LoginPath = "/Auth";
             });
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
 
-            services.AddSingleton<Cart>();
-            services.AddSingleton<CartDetail>();
+            services.AddScoped<Cart>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
