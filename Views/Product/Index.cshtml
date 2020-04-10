@@ -22,9 +22,13 @@
     }
 }
 
+@section NavbarText {
+    <a id="totalQty" class="nav-link text-dark" asp-controller="Cart" asp-action="Index">@ViewData["TotalQty"]</a>
+}
+
 <div class="row my-4 justify-content-between">
     <form class="form-inline col-12" method="POST" asp-controller="Product" asp-action="Index">
-        <input class="form-control col-10" display="block" type="search" placeholder="Search" aria-label="Search" name="searchBy" required>
+        <input class="form-control col-10" display="block" type="search" placeholder="Search" aria-label="Search" name="searchBy">
         <div class="col-2 pr-0">
             <button class="btn btn-outline-secondary my-2 my-sm-0 col-12" type="submit">Search</button>
         </div>
@@ -48,10 +52,13 @@
                         </div>
                     </div>
                     <div class="card-footer bg-transparent border-secondary">
-                        <a href="#" class="btn btn-secondary w-100">$@product.Price - Add to Cart</a>
+                        <a href="#" class="btn btn-secondary w-100 addToCart" value=@product.ProductId>$@product.Price - Add to Cart</a>
                     </div>
                 </div>
             </div>
         }
     </div>
+}
+@section Scripts{
+    <script src="~/js/product.js"></script>
 }
