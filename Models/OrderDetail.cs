@@ -20,5 +20,7 @@ namespace ShoppingCart.Models
 
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
+        public virtual ICollection<Activation> Activations { get; set; }
+
     }
 }

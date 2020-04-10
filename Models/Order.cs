@@ -18,9 +18,10 @@ namespace ShoppingCart.Models
         [Required]
         public DateTime UtcDateTime { get; set; }
 
+        [NotMapped]
+        public int TotalQty { get; set; }
+
         public virtual User User { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<Activation> Activations { get; set; }
-
     }
 }
