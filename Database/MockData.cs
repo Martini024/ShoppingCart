@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Models;
+using ShoppingCart.Services;
 
 namespace ShoppingCart.Database
 {
     public class MockData
     {
-        public MockData(ShoppingCartContext dbcontext)
+        public MockData(ShoppingCartContext dbcontext, GuestService guest)
         {
             // Generate hard-coded 4 users sharing 123 as password
             User user = new User();
@@ -28,7 +29,11 @@ namespace ShoppingCart.Database
 
             user.UserId = "Martini";
             dbcontext.Add(user);
+            dbcontext.SaveChanges();
 
+            user.UserId = guest.guestId;
+            user.Password = guest.guestId;
+            dbcontext.Add(user);
             dbcontext.SaveChanges();
 
             // Generate hard-coded 6 products

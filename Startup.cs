@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Database;
 using ShoppingCart.Models;
+using ShoppingCart.Services;
 
 namespace ShoppingCart
 {
@@ -31,14 +32,15 @@ namespace ShoppingCart
             {
                 option.LoginPath = "/Auth";
             });
-            services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
 
             services.AddScoped<Cart>();
+            services.AddScoped<GuestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext, GuestService _guest)
         {
             if (env.IsDevelopment())
             {
@@ -66,9 +68,9 @@ namespace ShoppingCart
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // _dbContext.Database.EnsureDeleted();
-            // _dbContext.Database.EnsureCreated();
-            // new MockData(_dbContext);
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Database.EnsureCreated();
+            new MockData(_dbContext, _guest);
         }
     }
 }
