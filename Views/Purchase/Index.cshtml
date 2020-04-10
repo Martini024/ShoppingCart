@@ -1,13 +1,7 @@
+@model List<ShoppingCart.Models.Order>
+@using System;
 @{
     Layout= "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "My Purchase";
-    ViewBag.Inline1 = "Home";
-    ViewBag.Controller1 = "Product";
-    ViewBag.Action1 = "Index";
-    ViewBag.Inline2 = "Logout";
-    ViewBag.Controller2 = "Auth";
-    ViewBag.Action2 = "Logout";
-    ViewBag.Method2 = "POST";
 }
 
 @section Title {
@@ -22,4 +16,86 @@
     <form method="POST" asp-controller="Auth" asp-action="Logout">
         <button class="btn text-dark shadow-none" >Logout</button>
     </form>
+}
+
+@functions {
+    string formatDateTime(DateTime dateTime)
+    {
+        return dateTime.ToLocalTime().ToString("DD-MM-YYYY");
+    }
+}
+
+@if (Model.Count() == 0) {
+    <h1 class="mt-4">Sorry, nothing is in your purchase history.</h1>
+}
+else 
+{
+    <div class="container">
+        @foreach (var order in Model)
+        {
+            @foreach (var orderDetail in order.OrderDetails)
+            {
+                <div class="row mt-4">
+                    <div class="card col-6 h-100 w-75 border-secondary p-0">
+                        <div class="card-header bg-transparent border-secondary">
+                            <img src="~/img/@orderDetail.Product.Image" class="card-img-top w-100"/>
+                        </div>
+                        <div class="card-body">
+                            <div class="h-30">
+                                <h5 class="card-title">@orderDetail.Product.Name</h5>
+                                <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@orderDetail.Product.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="container h-100 pl-5">
+                            <div class="row h-50 align-content-end">
+                                <div class="col-4">
+                                    <h5 class="card-title">Purchased On: </h5>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title">$@formatDateTime(order.UtcDateTime)</h5>
+                                </div> 
+                            </div>
+                            <div class="row h-25 align-content-start">
+                                <div class="col-4 my-auto">
+                                    <h5 class="card-title my-0">Quantity: </h5>
+                                </div>
+                                <div class="col-8">
+                                    <div class="input-group">
+                                        <input type="number" min=0 class="form-control border-secondary" placeholder=@orderDetail.Qty />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-danger" type="button">Remove</button>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="row h-25 align-content-start">
+                                @if (orderDetail.Qty == 1) {
+                                    <span class="dropdown-item">activationCode</span>
+                                }
+                                else
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            @orderDetail.Activations.First()
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            @for (int i = 1; i < orderDetail.Activations.Count(); i++)
+                                            {
+                                                <span class="dropdown-item">activationCode</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+@section Scripts{
+    @* <script src="~/js/product.js"></script> *@
 }

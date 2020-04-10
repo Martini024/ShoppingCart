@@ -28,7 +28,7 @@
 
 <div class="row my-4 justify-content-between">
     <form class="form-inline col-12" method="POST" asp-controller="Product" asp-action="Index">
-        <input class="form-control col-10" display="block" type="search" placeholder="Search" aria-label="Search" name="searchBy">
+        <input class="form-control col-10" display="block" type="search" value=@(ViewData["SearchBy"] == null ? "Search" : ViewData["SearchBy"]) aria-label="Search" name="searchBy">
         <div class="col-2 pr-0">
             <button class="btn btn-outline-secondary my-2 my-sm-0 col-12" type="submit">Search</button>
         </div>
