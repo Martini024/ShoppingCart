@@ -17,6 +17,9 @@ namespace ShoppingCart.Models
 
         [Required]
         public double Total { get; set; }
+
+        [NotMapped]
+        public int TotalQty { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<CartDetail> CartDetails { get; set; }
     }
