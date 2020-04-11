@@ -16,8 +16,5 @@ namespace ShoppingCart.Models
 
         [MaxLength(36)]
         public string OrderId { get; set; }
-
-        public virtual Order Order { get; set; }
-        public virtual Product Product { get; set; }
     }
 }
