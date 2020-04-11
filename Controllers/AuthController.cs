@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
@@ -25,11 +26,14 @@ namespace ShoppingCart.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (HttpContext.User.Claims.FirstOrDefault() != null)
+                return RedirectToAction("Index", "Product");
+            else
+                return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string userName, string password)
+        public async Task<string> Login(string userName, string password)
         {
             bool isRegistered = _dbContext.Users.Where(user => user.UserId == userName && user.Password == password).Any();
             if (isRegistered == true)
@@ -41,10 +45,10 @@ namespace ShoppingCart.Controllers
                 var principal = new ClaimsPrincipal(identity);
                 var props = new AuthenticationProperties();
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
-                return RedirectToAction("Index", "Product");
+                return "/Product/Index";
             }
             else
-                return View();
+                return "/Auth/Index";
         }
 
         [HttpPost]
