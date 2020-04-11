@@ -5,12 +5,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using ShoppingCart.Models;
 using ShoppingCart.Database;
-
 namespace ShoppingCart.Controllers
 {
     public class ProductController : Controller
@@ -23,21 +23,54 @@ namespace ShoppingCart.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        public string GetCurrentUser()
         {
             var user = HttpContext.User.Claims.FirstOrDefault();
-            ViewData["Title"] = user == null ? "ShoppingCart" : "Hello, " + user.Value;
-            ViewData["isLoggedIn"] = user == null ? false : true;
-            // FIXME: repetatvie code
-            if (user != null)
+            if (user == null)
             {
-                Cart cart = _dbContext.Carts.Where(c => c.UserId == user.Value).FirstOrDefault();
-                if (cart == null)
-                    ViewData["TotalQty"] = 0;
+                if (HttpContext.Session.GetString("GuestId") != null)
+                {
+                    return HttpContext.Session.GetString("GuestId");
+                }
                 else
-                    ViewData["TotalQty"] = cart.CartDetails.Where(cd => cd.CartId == cart.CartId).Count();
-                _logger.LogInformation(ViewData["TotalQty"].ToString());
+                {
+                    string guestId = Guid.NewGuid().ToString();
+                    HttpContext.Session.SetString("GuestId", guestId);
+                    _dbContext.Users.Add(new User()
+                    {
+                        UserId = guestId,
+                        Password = Guid.NewGuid().ToString()
+                    });
+                    _dbContext.SaveChanges();
+                    return guestId;
+                }
             }
+            else
+                return user.Value;
+        }
+
+        public void SetNavBar()
+        {
+            string user = GetCurrentUser();
+            if (HttpContext.User.Claims.FirstOrDefault() == null)
+            {
+                ViewData["Title"] = "ShoppingCart";
+                ViewData["isLoggedIn"] = false;
+            }
+            else
+            {
+                ViewData["Title"] = "Hello, " + user;
+                ViewData["isLoggedIn"] = true;
+            }
+            Cart cart = _dbContext.Carts.Where(c => c.UserId == user).FirstOrDefault();
+            if (cart == null)
+                ViewData["TotalQty"] = 0;
+            else
+                ViewData["TotalQty"] = cart.CartDetails.Sum(cd => cd.Qty);
+        }
+        public IActionResult Index()
+        {
+            SetNavBar();
             List<Product> products = _dbContext.Products.ToList();
             return View(products);
         }
@@ -45,26 +78,12 @@ namespace ShoppingCart.Controllers
         [HttpPost]
         public IActionResult Index(string searchBy)
         {
-            // FIXME: repetatvie code
             if (searchBy == null)
                 return RedirectToAction("Index", "Product");
-            var user = HttpContext.User.Claims.FirstOrDefault();
-            ViewData["Title"] = user == null ? "ShoppingCart" : "Hello, " + user.Value;
-            ViewData["isLoggedIn"] = user == null ? false : true;
-            if (user != null)
-            {
-                Cart cart = _dbContext.Carts.Where(c => c.UserId == user.Value).FirstOrDefault();
-                if (cart == null)
-                    ViewData["TotalQty"] = 0;
-                else
-                    ViewData["TotalQty"] = cart.CartDetails.Where(cd => cd.CartId == cart.CartId).Count();
-            }
-            if (searchBy == null)
-            {
-                return RedirectToAction("Index", "Purchase");
-            }
             else
             {
+                SetNavBar();
+                ViewData["SearchBy"] = searchBy;
                 List<Product> products = _dbContext.Products.Where(product => product.Name.ToLower().Contains(searchBy.ToLower()) || product.Description.ToLower().Contains(searchBy.ToLower())).ToList();
                 return View(products);
             }

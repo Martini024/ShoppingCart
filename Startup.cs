@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Database;
 using ShoppingCart.Models;
-using ShoppingCart.Services;
 
 namespace ShoppingCart
 {
@@ -31,16 +30,16 @@ namespace ShoppingCart
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
             {
                 option.LoginPath = "/Auth";
+                option.AccessDeniedPath = "/";
             });
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
-
+            services.AddSession();
             services.AddScoped<Cart>();
-            services.AddScoped<GuestService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext, GuestService _guest)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -60,17 +59,17 @@ namespace ShoppingCart
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Product}/{action=Index}/{id?}");
             });
 
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Database.EnsureCreated();
-            new MockData(_dbContext, _guest);
+            // _dbContext.Database.EnsureDeleted();
+            // _dbContext.Database.EnsureCreated();
+            // new MockData(_dbContext);
         }
     }
 }
