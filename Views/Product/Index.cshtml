@@ -23,7 +23,10 @@
 }
 
 @section NavbarText {
-    <a id="totalQty" class="nav-link text-dark" asp-controller="Cart" asp-action="Index">@ViewData["TotalQty"]</a>
+    <a id="totalQty" class="nav-link text-dark" asp-controller="Cart" asp-action="Index">
+        <i class="fas fa-cart-plus"></i>
+        @ViewData["TotalQty"]
+    </a>
 }
 
 <div class="row my-4 justify-content-between">
