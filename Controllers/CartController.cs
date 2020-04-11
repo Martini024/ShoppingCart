@@ -19,12 +19,10 @@ namespace ShoppingCart.Controllers
     {
         private readonly ILogger<CartController> _logger;
         private ShoppingCartContext _dbContext;
-        private Cart _cart;
-        public CartController(ILogger<CartController> logger, ShoppingCartContext dbContext, Cart cart)
+        public CartController(ILogger<CartController> logger, ShoppingCartContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _cart = cart;
         }
         public string GetCurrentUser()
         {
@@ -65,20 +63,21 @@ namespace ShoppingCart.Controllers
             {
                 string userId = GetCurrentUser();
                 var currentCart = _dbContext.Carts.Where(c => c.UserId == userId);
+                Cart cart = new Cart();
                 if (!currentCart.Any())
                 {
-                    _cart.UserId = userId;
-                    CreateCart(productId, price, _cart);
-                    _dbContext.Carts.Add(_cart);
+                    cart.UserId = userId;
+                    CreateCart(productId, price, cart);
+                    _dbContext.Carts.Add(cart);
                 }
                 else
                 {
-                    _cart = currentCart.First();
-                    UpdateCurrentCart(productId, price, _cart);
-                    _dbContext.Carts.Update(_cart);
+                    cart = currentCart.First();
+                    UpdateCurrentCart(productId, price, cart);
+                    _dbContext.Carts.Update(cart);
                 }
                 _dbContext.SaveChanges();
-                return Json(_cart.TotalQty);
+                return Json(cart.TotalQty);
             }
             else
                 return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
@@ -117,26 +116,106 @@ namespace ShoppingCart.Controllers
             cart.TotalQty = cart.CartDetails.Sum(cd => cd.Qty);
         }
 
-        // TODO: Update qty method
-        // - input qtyChanged orderdetail
+        [HttpPost]
+        public void UpdateQty(string cartId, string productId, int changeTo)
+        {
+            if (changeTo >= 0)
+            {
+                var cartDetail = _dbContext.CartDetails.Where(cd => cd.CartId == cartId && cd.ProductId == productId).FirstOrDefault();
+                var cart = _dbContext.Carts.Where(c => c.CartId == cartId).FirstOrDefault();
+                if (cart != null && cartDetail != null)
+                {
+                    cart.Total -= cartDetail.Product.Price * (cartDetail.Qty - changeTo);
+                    if (changeTo > 0)
+                        cartDetail.Qty = changeTo;
+                    else
+                        _dbContext.CartDetails.Remove(cartDetail);
+                }
+                _dbContext.SaveChanges();
+            }
+            return;
+        }
 
-        // TODO: Checkout
-        // Check login first
-        // Bring to payment controller
         [Authorize]
         public IActionResult Checkout()
         {
-            RemoveFromCart();
-            AddToOrder();
+            double total = MergeGuestCart();
+            return RedirectToAction("Index", "Payment", new { total = total });
+        }
+
+        public IActionResult PlaceOrder()
+        {
+            CreateOrder();
             return RedirectToAction("Index", "Purchase");
         }
 
-        public void RemoveFromCart()
+        public double MergeGuestCart()
         {
-
+            var userId = HttpContext.User.Claims.First().Value;
+            var guestId = HttpContext.Session.GetString("GuestId");
+            var userCart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+            var guestCart = _dbContext.Carts.Where(c => c.UserId == guestId).FirstOrDefault();
+            var guest = _dbContext.Users.Where(u => u.UserId == guestId).FirstOrDefault();
+            double total = 0;
+            if (guestId != null)
+            {
+                if (guestCart != null)
+                {
+                    if (userCart != null)
+                    {
+                        foreach (var guestCartDetail in guestCart.CartDetails)
+                        {
+                            var userCartDetail = userCart.CartDetails.Where(cd => cd.ProductId == guestCartDetail.ProductId).FirstOrDefault();
+                            if (userCartDetail != null)
+                            {
+                                userCartDetail.Qty += guestCartDetail.Qty;
+                            }
+                            else
+                            {
+                                userCart.CartDetails.Add(new CartDetail()
+                                {
+                                    CartId = userCart.CartId,
+                                    ProductId = guestCartDetail.ProductId,
+                                    Qty = guestCartDetail.Qty
+                                });
+                            }
+                        }
+                        userCart.Total += guestCart.Total;
+                        total = userCart.Total;
+                    }
+                    else
+                    {
+                        guestCart.UserId = userId;
+                        total = guestCart.Total;
+                    }
+                }
+                else
+                {
+                    if (userCart != null)
+                        total = userCart.Total;
+                    else
+                        total = 0;
+                }
+                if (guest != null)
+                    _dbContext.Users.Remove(guest);
+                _dbContext.SaveChanges();
+                HttpContext.Session.Remove("GuestId");
+            }
+            else
+            {
+                if (userCart != null)
+                    total = userCart.Total;
+                else
+                    total = 0;
+            }
+            return total;
         }
-        public void AddToOrder()
+        public void CreateOrder()
         {
+            // 1. create order
+            // _order.OrderId = Guid.NewGuid().ToString();
+            // _order.UserId = GetCurrentUser();
+            // _order.UtcDateTime = DateTime.Now.ToUniversalTime();
 
         }
         // TODO: Assign activation code

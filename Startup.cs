@@ -35,6 +35,7 @@ namespace ShoppingCart
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
             services.AddSession();
+            services.AddScoped<Cart>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
