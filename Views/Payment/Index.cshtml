@@ -1,0 +1,12 @@
+@section Title {
+    <a class="navbar-brand" href="#">Payment</a>
+}
+
+@section NavbarText {
+    <a class="nav-link text-dark">Total: $@ViewData["Total"]</a>
+}
+
+<h1>Payment</h1>
+<form method="POST" asp-controller="Payment" asp-action="Payment">
+    <button>Pay Now</button>
+</form>

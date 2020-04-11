@@ -21,11 +21,12 @@
 @functions {
     string formatDateTime(DateTime dateTime)
     {
-        return dateTime.ToLocalTime().ToString("DD-MM-YYYY");
+        return dateTime.ToLocalTime().ToString("d MMM yyyy - HH : mm");
     }
 }
 
-@if (Model.Count() == 0) {
+@if (Model.Count() == 0) 
+{
     <h1 class="mt-4">Sorry, nothing is in your purchase history.</h1>
 }
 else 
@@ -42,53 +43,81 @@ else
                         </div>
                         <div class="card-body">
                             <div class="h-30">
-                                <h5 class="card-title">@orderDetail.Product.Name</h5>
+                                <h5>@orderDetail.Product.Name</h5>
                                 <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@orderDetail.Product.Description</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="container h-100 pl-5">
-                            <div class="row h-50 align-content-end">
-                                <div class="col-4">
-                                    <h5 class="card-title">Purchased On: </h5>
-                                </div>
-                                <div class="col-8">
-                                    <h5 class="card-title">$@formatDateTime(order.UtcDateTime)</h5>
-                                </div> 
-                            </div>
-                            <div class="row h-25 align-content-start">
-                                <div class="col-4 my-auto">
-                                    <h5 class="card-title my-0">Quantity: </h5>
-                                </div>
-                                <div class="col-8">
-                                    <div class="input-group">
-                                        <input type="number" min=0 class="form-control border-secondary" placeholder=@orderDetail.Qty />
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-danger" type="button">Remove</button>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                            <div class="row h-25 align-content-start">
-                                @if (orderDetail.Qty == 1) {
-                                    <span class="dropdown-item">activationCode</span>
-                                }
-                                else
-                                {
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            @orderDetail.Activations.First()
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            @for (int i = 1; i < orderDetail.Activations.Count(); i++)
+                            <div class="row align-items-center justify-content-center h-100">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <h5>Purchased On: </h5>
+                                        <p class="mb-0">@formatDateTime(order.UtcDateTime)</p>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <h5>Quantity: </h5>
+                                        <p class="mb-0">@orderDetail.Qty</p>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <h5>Activation Code: </h5>
+                                        <div class="dropdown">
+                                            @if (orderDetail.Qty > 1) 
                                             {
-                                                <span class="dropdown-item">activationCode</span>
+                                                <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                @orderDetail.Activations.First().Code
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    @for (int i = 1; i < orderDetail.Activations.Count(); i++)
+                                                    {
+                                                        <span class="dropdown-item">@orderDetail.Activations.ElementAt(i).Code</span>
+                                                    }
+                                                </div>
+                                            }
+                                            else 
+                                            {
+                                                <button class="btn btn-info" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                @orderDetail.Activations.First().Code
+                                                </button>
                                             }
                                         </div>
-                                    </div>
-                                }
+                                    </li>
+                                </ul>
                             </div>
+                            
+                            @* <div class="row">
+                                <h5>Purchased On: </h5>
+                            </div>
+                            <div class="row">
+                                <p>@formatDateTime(order.UtcDateTime)</p>
+                            </div>
+                            <div class="row">
+                                <h5>Quantity: </h5>
+                            </div>
+                            <div class="row">
+                                <p>@orderDetail.Qty</p>
+                            </div>
+                            <div class="row h-25 align-content-start">
+                                <div class="col-6 my-auto">
+                                    <h5 class="my-0">Activation Code: </h5>
+                                </div>
+                                <div class="col-6">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            @orderDetail.Activations.First().Code
+                                        </button>
+                                        @if (orderDetail.Qty > 1) {
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                @for (int i = 1; i < orderDetail.Activations.Count(); i++)
+                                                {
+                                                    <span class="dropdown-item">@orderDetail.Activations.ElementAt(i).Code</span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div> 
+                            </div> *@
                         </div>
                     </div>
                 </div>
@@ -97,5 +126,5 @@ else
     </div>
 }
 @section Scripts{
-    @* <script src="~/js/product.js"></script> *@
+    @* <script src="~/js/site.js"></script> *@
 }
