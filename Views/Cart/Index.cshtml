@@ -12,7 +12,7 @@
 }
 
 @section NavLink2 {
-    <a class="nav-link text-dark">Checkout</a>
+    <a class="nav-link text-dark" asp-controller="Cart" asp-action="Checkout">Checkout</a>
 }
 
 @section NavbarText {
@@ -24,10 +24,10 @@
 @if (Model == null || Model.CartDetails.Count() == 0) {
         <h1 class="mt-4">Sorry, nothing is in your cart.</h1>
 }else {
-    <div class="container">
+    <div class="container cart" data-value=@Model.CartId>
         @foreach (var cartDetail in Model.CartDetails)
         {
-            <div class="row mt-4">
+            <div class="row mt-4 cartDetail" data-value=@cartDetail.ProductId>
                 <div class="card col-6 h-100 w-75 border-secondary p-0">
                     <div class="card-header bg-transparent border-secondary">
                         <img src="~/img/@cartDetail.Product.Image" class="card-img-top w-100"/>
@@ -46,7 +46,7 @@
                                 <h5 class="card-title">Price: </h5>
                             </div>
                             <div class="col-8">
-                                <h5 class="card-title">$@(cartDetail.Product.Price * cartDetail.Qty)</h5>
+                                <h5 class="card-title price">$@(cartDetail.Product.Price * cartDetail.Qty)</h5>
                             </div> 
                         </div>
                         <div class="row h-50 align-content-start">
@@ -55,8 +55,8 @@
                             </div>
                             <div class="col-8">
                                 <div class="input-group">
-                                    <input type="number" min=0 class="form-control border-secondary" placeholder=@cartDetail.Qty />
-                                    <div class="input-group-append">
+                                    <input type="number" min=0 class="form-control border-secondary updateQty" value=@cartDetail.Qty />
+                                    <div class="input-group-append removeCartDetail">
                                         <button class="btn btn-outline-danger" type="button">Remove</button>
                                     </div>
                                 </div>
@@ -70,5 +70,5 @@
     </div>
 }
 @section Scripts{
-    @* <script src="~/js/product.js"></script> *@
+    <script src="~/js/cart.js"></script>
 }
