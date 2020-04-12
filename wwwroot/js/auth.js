@@ -5,13 +5,6 @@ $('#signIn').on('submit', function (e) {
 	if (localStorage.getItem('cart') !== null) {
 		var cart = JSON.parse(localStorage.getItem('cart'));
 		var cartDetails = cart.cartDetails;
-		// console.log(cartDetails);
-		// for (let i = 0; i < cartDetails.length; i++) {
-		// 	delete cartDetails[i].product;
-		// 	cartDetails[i].cartId = "";
-		// }
-		// console.log(cartDetails);
-
 		cartDetails = JSON.stringify(cartDetails);
 		console.log(cartDetails);
 	}

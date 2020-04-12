@@ -41,7 +41,6 @@ namespace ShoppingCart.Controllers
         public async Task<string> Login(string userName, string password, [FromBody]List<CartDetail> cartDetails)
         {
             password = _authHash.GetHash(password);
-            _logger.LogInformation(password);
             bool isRegistered = _dbContext.Users.Where(user => user.UserId == userName && user.Password == password).Any();
             if (isRegistered == true)
             {

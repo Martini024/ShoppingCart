@@ -6,15 +6,10 @@ namespace ShoppingCart.Database
 {
     public class AuthHash
     {
-        private byte[] Salt;
-
+        public byte[] Salt { get; }
         public AuthHash()
         {
             byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
             this.Salt = salt;
         }
         public string GetHash(string originValue)
