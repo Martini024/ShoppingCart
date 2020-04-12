@@ -23,7 +23,14 @@ $('#signIn').on('submit', function (e) {
 		data: postBody,
 		success: function (res) {
 			localStorage.removeItem('cart');
-			window.location.href = res;
+			if (res === '/Auth/Index') {
+				bootbox.alert('Invalid username or password!', function () {
+					/* your callback code */
+					window.location.href = res;
+				});
+			} else {
+				window.location.href = res;
+			}
 		},
 	});
 });
