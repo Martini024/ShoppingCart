@@ -41,7 +41,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net Charts";
             product.Description = "Brings a powerful charting capabilities to your .Net applications.";
             product.Price = 99;
-            product.Image = "1.jpg";
+            product.Image = "NetCharts.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
 
@@ -49,7 +49,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net Paypal";
             product.Description = "Integrate your .Net apps with Paypal the easy way!";
             product.Price = 69;
-            product.Image = "2.jpg";
+            product.Image = "NetPaypal.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
 
@@ -57,7 +57,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net ML";
             product.Description = "Supercharged .Net machine learning libraries.";
             product.Price = 299;
-            product.Image = "3.jpg";
+            product.Image = "NetML.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
 
@@ -65,7 +65,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net Analytics";
             product.Description = "Perform data mining and analytics easily in .Net.";
             product.Price = 299;
-            product.Image = "4.jpg";
+            product.Image = "NetAnalytics.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
 
@@ -73,7 +73,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net Logger";
             product.Description = "Logs and aggregates events easily in your .Net apps.";
             product.Price = 49;
-            product.Image = "5.jpg";
+            product.Image = "NetLogger.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
 
@@ -81,7 +81,7 @@ namespace ShoppingCart.Database
             product.Name = ".Net Numerics";
             product.Description = "Powerful numerical methods for your .Net simulations.";
             product.Price = 199;
-            product.Image = "6.jpg";
+            product.Image = "NetNumerics.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
         }
