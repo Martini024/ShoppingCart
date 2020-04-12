@@ -39,12 +39,12 @@ namespace ShoppingCart
             });
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
-            services.AddSession();
             services.AddScoped<Cart>();
+            services.AddSingleton<AuthHash>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ShoppingCartContext _dbContext, AuthHash _authHash)
         {
             if (env.IsDevelopment())
             {
@@ -64,7 +64,6 @@ namespace ShoppingCart
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
-            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -72,9 +71,9 @@ namespace ShoppingCart
                     pattern: "{controller=Product}/{action=Index}/{id?}");
             });
 
-            // _dbContext.Database.EnsureDeleted();
-            // _dbContext.Database.EnsureCreated();
-            // new MockData(_dbContext);
+            _dbContext.Database.EnsureDeleted();
+            _dbContext.Database.EnsureCreated();
+            new MockData(_dbContext, _authHash);
         }
     }
 }

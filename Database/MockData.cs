@@ -4,17 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShoppingCart.Models;
+using ShoppingCart.Database;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace ShoppingCart.Database
 {
     public class MockData
     {
-        public MockData(ShoppingCartContext dbcontext)
+        public MockData(ShoppingCartContext dbcontext, AuthHash authHash)
         {
             // Generate hard-coded 4 users sharing 123 as password
             User user = new User();
             user.UserId = "John";
             user.Password = "202cb962ac59075b964b07152d234b70";
+
+            user.Password = authHash.GetHash(user.Password);
             dbcontext.Add(user);
             dbcontext.SaveChanges();
 

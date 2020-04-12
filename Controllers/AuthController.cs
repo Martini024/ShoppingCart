@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using ShoppingCart.Models;
 using ShoppingCart.Database;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace ShoppingCart.Controllers
 {
@@ -19,10 +21,12 @@ namespace ShoppingCart.Controllers
     {
         private readonly ILogger<AuthController> _logger;
         private ShoppingCartContext _dbContext;
-        public AuthController(ILogger<AuthController> logger, ShoppingCartContext dbContext)
+        private AuthHash _authHash;
+        public AuthController(ILogger<AuthController> logger, ShoppingCartContext dbContext, AuthHash authHash)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _authHash = authHash;
         }
 
         public IActionResult Index()
@@ -36,6 +40,8 @@ namespace ShoppingCart.Controllers
         [HttpPost]
         public async Task<string> Login(string userName, string password, [FromBody]List<CartDetail> cartDetails)
         {
+            password = _authHash.GetHash(password);
+            _logger.LogInformation(password);
             bool isRegistered = _dbContext.Users.Where(user => user.UserId == userName && user.Password == password).Any();
             if (isRegistered == true)
             {

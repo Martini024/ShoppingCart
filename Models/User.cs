@@ -12,7 +12,7 @@ namespace ShoppingCart.Models
         public string UserId { get; set; }
 
         [Required]
-        [MaxLength(36)]
+        [MaxLength(50)]
 
         public string Password { get; set; }
         public virtual Cart Cart { get; set; }
