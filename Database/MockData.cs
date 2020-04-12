@@ -84,6 +84,22 @@ namespace ShoppingCart.Database
             product.Image = "NetNumerics.png";
             dbcontext.Add(product);
             dbcontext.SaveChanges();
+
+            product.ProductId = Guid.NewGuid().ToString();
+            product.Name = ".Net Directory";
+            product.Description = "Build highly secure applications with single sign-on and multi-factor authentication.";
+            product.Price = 139;
+            product.Image = "NetDirectory.png";
+            dbcontext.Add(product);
+            dbcontext.SaveChanges();
+
+            product.ProductId = Guid.NewGuid().ToString();
+            product.Name = ".Net Cognition";
+            product.Description = "Comprehensive AI services and APIs to help you deploy cognitive services.";
+            product.Price = 699;
+            product.Image = "NetCognition.png";
+            dbcontext.Add(product);
+            dbcontext.SaveChanges();
         }
     }
 }
