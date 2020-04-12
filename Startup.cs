@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +32,10 @@ namespace ShoppingCart
             {
                 option.LoginPath = "/Auth";
                 option.AccessDeniedPath = "/";
+                option.Cookie = new CookieBuilder()
+                {
+                    Name = "User"
+                };
             });
             services.AddControllersWithViews();
             services.AddDbContext<ShoppingCartContext>(opt => opt.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DbConn")));
