@@ -23,50 +23,25 @@ namespace ShoppingCart.Controllers
             _dbContext = dbContext;
         }
 
-        public string GetCurrentUser()
+        public void SetNavBar()
         {
             var user = HttpContext.User.Claims.FirstOrDefault();
             if (user == null)
-            {
-                if (HttpContext.Session.GetString("GuestId") != null)
-                {
-                    return HttpContext.Session.GetString("GuestId");
-                }
-                else
-                {
-                    string guestId = Guid.NewGuid().ToString();
-                    HttpContext.Session.SetString("GuestId", guestId);
-                    _dbContext.Users.Add(new User()
-                    {
-                        UserId = guestId,
-                        Password = Guid.NewGuid().ToString()
-                    });
-                    _dbContext.SaveChanges();
-                    return guestId;
-                }
-            }
-            else
-                return user.Value;
-        }
-
-        public void SetNavBar()
-        {
-            string user = GetCurrentUser();
-            if (HttpContext.User.Claims.FirstOrDefault() == null)
             {
                 ViewData["Title"] = "ShoppingCart";
                 ViewData["isLoggedIn"] = false;
             }
             else
             {
-                ViewData["Title"] = "Hello, " + user;
+                ViewData["Title"] = "Hello, " + user.Value;
                 ViewData["isLoggedIn"] = true;
+                Cart cart = _dbContext.Carts.Where(c => c.UserId == user.Value).FirstOrDefault();
+                if (cart == null)
+                    ViewData["TotalQty"] = 0;
+                else
+                    ViewData["TotalQty"] = cart.CartDetails.Sum(cd => cd.Qty);
             }
-            Cart cart = _dbContext.Carts.Where(c => c.UserId == user).FirstOrDefault();
-            if (cart == null)
-                ViewData["TotalQty"] = 0;
-            else
-                ViewData["TotalQty"] = cart.CartDetails.Sum(cd => cd.Qty);
+
         }
         public IActionResult Index()
         {

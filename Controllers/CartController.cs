@@ -26,104 +26,86 @@ namespace ShoppingCart.Controllers
         }
         public string GetCurrentUser()
         {
-            var user = HttpContext.User.Claims.FirstOrDefault();
-            if (user == null)
-            {
-                if (HttpContext.Session.GetString("GuestId") != null)
-                {
-                    return HttpContext.Session.GetString("GuestId");
-                }
-                else
-                {
-                    string guestId = Guid.NewGuid().ToString();
-                    HttpContext.Session.SetString("GuestId", guestId);
-                    _dbContext.Users.Add(new User()
-                    {
-                        UserId = guestId,
-                        Password = Guid.NewGuid().ToString()
-                    });
-                    _dbContext.SaveChanges();
-                    return guestId;
-                }
-            }
-            else
-                return user.Value;
+            return HttpContext.User.Claims.First().Value;
         }
         public IActionResult Index()
         {
-            string userId = GetCurrentUser();
-            Cart cart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
-            return View(cart);
-        }
-
-        [HttpPost]
-        public IActionResult AddToCart(string productId, double price)
-        {
-            if (_dbContext.Products.Where(p => p.ProductId == productId && p.Price == price).Any())
+            if (HttpContext.User.Claims.FirstOrDefault() != null)
             {
                 string userId = GetCurrentUser();
-                var currentCart = _dbContext.Carts.Where(c => c.UserId == userId);
-                Cart cart = new Cart();
-                if (!currentCart.Any())
+                Cart cart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+                return View(cart);
+            }
+            else
+                return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult AddToCart(string productId)
+        {
+            string userId = GetCurrentUser();
+            var product = _dbContext.Products.Where(p => p.ProductId == productId).FirstOrDefault();
+            if (product != null)
+            {
+                var price = product.Price;
+                var currentCart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+                var totalQty = 1;
+                if (currentCart != null)
                 {
-                    cart.UserId = userId;
-                    CreateCart(productId, price, cart);
-                    _dbContext.Carts.Add(cart);
+                    currentCart.Total += price;
+                    var currentCartDetail = _dbContext.CartDetails.Where(cd => cd.CartId == currentCart.CartId && cd.ProductId == productId).FirstOrDefault();
+                    if (currentCartDetail != null)
+                    {
+                        currentCartDetail.Qty++;
+                    }
+                    else
+                    {
+                        currentCart.CartDetails.Add(new CartDetail
+                        {
+                            CartId = currentCart.CartId,
+                            ProductId = productId,
+                            Qty = 1
+                        });
+                    }
+                    totalQty = currentCart.CartDetails.Sum(cd => cd.Qty);
+                    _dbContext.Carts.Update(currentCart);
                 }
                 else
                 {
-                    cart = currentCart.First();
-                    UpdateCurrentCart(productId, price, cart);
-                    _dbContext.Carts.Update(cart);
+                    string cartId = Guid.NewGuid().ToString();
+                    _dbContext.Carts.Add(new Cart()
+                    {
+                        UserId = userId,
+                        CartId = cartId,
+                        Total = price,
+                        CartDetails = new List<CartDetail>() {
+                            new CartDetail
+                            {
+                                CartId = cartId,
+                                ProductId = productId,
+                                Qty = 1
+                            }
+                        }
+                    });
                 }
                 _dbContext.SaveChanges();
-                return Json(cart.TotalQty);
+                return Json(totalQty);
             }
             else
                 return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public void CreateCart(string productId, double price, Cart cart)
-        {
-            cart.CartId = Guid.NewGuid().ToString();
-            cart.Total = price;
-            cart.CartDetails = new List<CartDetail>() {
-                    new CartDetail
-                    {
-                        CartId = cart.CartId,
-                        ProductId = productId,
-                        Qty = 1
-                    }
-                };
-            cart.TotalQty = cart.CartDetails.Sum(cd => cd.Qty);
-        }
-        public void UpdateCurrentCart(string productId, double price, Cart cart)
-        {
-            cart.Total += price;
-            var currentCartDetail = _dbContext.CartDetails.Where(cd => cd.CartId == cart.CartId && cd.ProductId == productId);
-            if (!currentCartDetail.Any())
-            {
-                cart.CartDetails.Add(new CartDetail
-                {
-                    CartId = cart.CartId,
-                    ProductId = productId,
-                    Qty = 1
-                });
-            }
-            else
-            {
-                currentCartDetail.First().Qty++;
-            }
-            cart.TotalQty = cart.CartDetails.Sum(cd => cd.Qty);
-        }
 
+        [Authorize]
         [HttpPost]
-        public void UpdateQty(string cartId, string productId, int changeTo)
+        public void UpdateQty(string productId, int changeTo)
         {
             if (changeTo >= 0)
             {
-                var cartDetail = _dbContext.CartDetails.Where(cd => cd.CartId == cartId && cd.ProductId == productId).FirstOrDefault();
-                var cart = _dbContext.Carts.Where(c => c.CartId == cartId).FirstOrDefault();
-                if (cart != null && cartDetail != null)
+                var userId = GetCurrentUser();
+                var cart = _dbContext.Carts.Where(c => c.UserId == userId).First();
+                var cartDetail = _dbContext.CartDetails.Where(cd => cd.CartId == cart.CartId && cd.ProductId == productId).FirstOrDefault();
+                if (cartDetail != null)
                 {
                     cart.Total -= cartDetail.Product.Price * (cartDetail.Qty - changeTo);
                     if (changeTo > 0)
@@ -139,88 +121,64 @@ namespace ShoppingCart.Controllers
         [Authorize]
         public IActionResult Checkout()
         {
-            double total = MergeGuestCart();
-            return RedirectToAction("Index", "Payment", new { total = total });
+            double total = 0;
+            var userId = GetCurrentUser();
+            var userCart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+            if (userCart != null)
+                total = userCart.Total;
+            if (total != 0)
+                return RedirectToAction("Index", "Payment", new { total = total });
+            else
+                return RedirectToAction("Index", "Cart");
         }
 
+        [Authorize]
         public IActionResult PlaceOrder()
         {
             CreateOrder();
             return RedirectToAction("Index", "Purchase");
         }
 
-        public double MergeGuestCart()
-        {
-            var userId = HttpContext.User.Claims.First().Value;
-            var guestId = HttpContext.Session.GetString("GuestId");
-            var userCart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
-            var guestCart = _dbContext.Carts.Where(c => c.UserId == guestId).FirstOrDefault();
-            var guest = _dbContext.Users.Where(u => u.UserId == guestId).FirstOrDefault();
-            double total = 0;
-            if (guestId != null)
-            {
-                if (guestCart != null)
-                {
-                    if (userCart != null)
-                    {
-                        foreach (var guestCartDetail in guestCart.CartDetails)
-                        {
-                            var userCartDetail = userCart.CartDetails.Where(cd => cd.ProductId == guestCartDetail.ProductId).FirstOrDefault();
-                            if (userCartDetail != null)
-                            {
-                                userCartDetail.Qty += guestCartDetail.Qty;
-                            }
-                            else
-                            {
-                                userCart.CartDetails.Add(new CartDetail()
-                                {
-                                    CartId = userCart.CartId,
-                                    ProductId = guestCartDetail.ProductId,
-                                    Qty = guestCartDetail.Qty
-                                });
-                            }
-                        }
-                        userCart.Total += guestCart.Total;
-                        total = userCart.Total;
-                    }
-                    else
-                    {
-                        guestCart.UserId = userId;
-                        total = guestCart.Total;
-                    }
-                }
-                else
-                {
-                    if (userCart != null)
-                        total = userCart.Total;
-                    else
-                        total = 0;
-                }
-                if (guest != null)
-                    _dbContext.Users.Remove(guest);
-                _dbContext.SaveChanges();
-                HttpContext.Session.Remove("GuestId");
-            }
-            else
-            {
-                if (userCart != null)
-                    total = userCart.Total;
-                else
-                    total = 0;
-            }
-            return total;
-        }
+        [Authorize]
         public void CreateOrder()
         {
-            // 1. create order
-            // _order.OrderId = Guid.NewGuid().ToString();
-            // _order.UserId = GetCurrentUser();
-            // _order.UtcDateTime = DateTime.Now.ToUniversalTime();
+            var userId = GetCurrentUser();
+            var cart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+            if (cart != null)
+            {
+                // 1. create order
+                Order order = new Order()
+                {
+                    OrderId = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    UtcDateTime = DateTime.Now.ToUniversalTime(),
+                    OrderDetails = new List<OrderDetail>(),
+                };
 
+                foreach (var cartDetail in cart.CartDetails)
+                {
+                    var activations = new List<Activation>();
+                    for (int i = 0; i < cartDetail.Qty; i++)
+                    {
+                        activations.Add(new Activation()
+                        {
+                            ProductId = cartDetail.ProductId,
+                            Code = Guid.NewGuid().ToString(),
+                            OrderId = order.OrderId
+                        });
+                    }
+                    order.OrderDetails.Add(new OrderDetail()
+                    {
+                        OrderId = order.OrderId,
+                        ProductId = cartDetail.ProductId,
+                        Qty = cartDetail.Qty,
+                        Activations = activations
+                    });
+                }
+                _dbContext.Orders.Add(order);
+                _dbContext.Carts.Remove(cart);
+                _dbContext.SaveChanges();
+            }
         }
-        // TODO: Assign activation code
-        // move item to order tbl
-        // assign activation code
-        // go to my purchase page
     }
 }

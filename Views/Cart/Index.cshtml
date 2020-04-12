@@ -19,24 +19,28 @@
     @if (Model != null && Model.CartDetails.Count() != 0) {
         <a id="totalPrice" class="nav-link text-dark">Total: $@Model.Total</a>
     }
+    else {
+        <a id="totalPrice" class="nav-link text-dark"></a>
+    }
 }
 
-@if (Model == null || Model.CartDetails.Count() == 0) {
-        <h1 class="mt-4">Sorry, nothing is in your cart.</h1>
+@if (Model == null) {
+    <div class="container" id="cart"></div>
+}
+else if (Model.CartDetails.Count() == 0) {
+    <h1 class="mt-4">Sorry, nothing is in your cart.</h1>
 }else {
-    <div class="container cart" data-value=@Model.CartId>
+    <div class="container">
         @foreach (var cartDetail in Model.CartDetails)
         {
-            <div class="row mt-4 cartDetail" data-value=@cartDetail.ProductId>
+            <div class="row mt-4 product" data-value=@cartDetail.ProductId>
                 <div class="card col-6 h-100 w-75 border-secondary p-0">
-                    <div class="card-header bg-transparent border-secondary">
-                        <img src="~/img/@cartDetail.Product.Image" class="card-img-top w-100"/>
+                    <div class="card-header bg-transparent border-secondary h-75">
+                        <img src="~/img/@cartDetail.Product.Image" class="card-img-top h-100"/>
                     </div>
-                    <div class="card-body">
-                        <div class="h-30">
-                            <h5 class="card-title">@cartDetail.Product.Name</h5>
-                            <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@cartDetail.Product.Description</p>
-                        </div>
+                    <div class="card-body h-30">
+                        <h5 class="card-title">@cartDetail.Product.Name</h5>
+                        <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@cartDetail.Product.Description</p>
                     </div>
                 </div>
                 <div class="col-6">
@@ -61,7 +65,6 @@
                                     </div>
                                 </div>
                             </div> 
-                            
                         </div>
                     </div>
                 </div>

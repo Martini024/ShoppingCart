@@ -2,14 +2,28 @@ $('#signIn').on('submit', function (e) {
 	e.preventDefault();
 	var userName = $('input[name=userName').val();
 	var password = md5($('input[name=password').val());
+	if (localStorage.getItem('cart') !== null) {
+		var cart = JSON.parse(localStorage.getItem('cart'));
+		var cartDetails = cart.cartDetails;
+		// console.log(cartDetails);
+		// for (let i = 0; i < cartDetails.length; i++) {
+		// 	delete cartDetails[i].product;
+		// 	cartDetails[i].cartId = "";
+		// }
+		// console.log(cartDetails);
+
+		cartDetails = JSON.stringify(cartDetails);
+		console.log(cartDetails);
+	}
+
 	$.ajax({
 		type: 'POST',
 		dataType: 'text',
-		url: '/Auth/Login?' + 'userName=' + userName,
-		data: {
-			password: password,
-		},
+		contentType: 'application/json; charset=utf-8',
+		url: '/Auth/Login?' + 'userName=' + userName + '&password=' + password,
+		data: cartDetails,
 		success: function (res) {
+			localStorage.removeItem('cart');
 			window.location.href = res;
 		},
 	});
