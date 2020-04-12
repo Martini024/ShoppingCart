@@ -27,7 +27,6 @@ $('.addToCart').click(function (e) {
 			description: $(this).closest('.card').find('.card-text').text(),
 			image: $(this).closest('.card').find('.card-img-top').attr('src'),
 		};
-		console.log(product);
 
 		if (localStorage.getItem('cart') === null) {
 			let cart = {
