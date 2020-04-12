@@ -85,39 +85,6 @@ else
                                     </li>
                                 </ul>
                             </div>
-                            
-                            @* <div class="row">
-                                <h5>Purchased On: </h5>
-                            </div>
-                            <div class="row">
-                                <p>@formatDateTime(order.UtcDateTime)</p>
-                            </div>
-                            <div class="row">
-                                <h5>Quantity: </h5>
-                            </div>
-                            <div class="row">
-                                <p>@orderDetail.Qty</p>
-                            </div>
-                            <div class="row h-25 align-content-start">
-                                <div class="col-6 my-auto">
-                                    <h5 class="my-0">Activation Code: </h5>
-                                </div>
-                                <div class="col-6">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            @orderDetail.Activations.First().Code
-                                        </button>
-                                        @if (orderDetail.Qty > 1) {
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                @for (int i = 1; i < orderDetail.Activations.Count(); i++)
-                                                {
-                                                    <span class="dropdown-item">@orderDetail.Activations.ElementAt(i).Code</span>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                </div> 
-                            </div> *@
                         </div>
                     </div>
                 </div>
@@ -126,5 +93,4 @@ else
     </div>
 }
 @section Scripts{
-    @* <script src="~/js/site.js"></script> *@
 }
