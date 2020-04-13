@@ -24,7 +24,6 @@ $('#signIn').on('submit', function (e) {
 		success: function (res) {
 			if (res === '/Auth/Index') {
 				bootbox.alert('Invalid username or password!', function () {
-					/* your callback code */
 					window.location.href = res;
 				});
 			} else {

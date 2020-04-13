@@ -82,7 +82,7 @@ else
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                     @for (int i = 0; i < orderDetail.Activations.Count(); i++)
                                                     {
-                                                        <span class="dropdown-item">@orderDetail.Activations.ElementAt(i).Code</span>
+                                                        <span class="dropdown-item codeItem" data-clipboard-text=@orderDetail.Activations.ElementAt(i).Code>@orderDetail.Activations.ElementAt(i).Code</span>
                                                     }
                                                 </div>
                                             </div>
@@ -101,4 +101,13 @@ else
     </div>
 }
 @section Scripts{
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <script src="~/lib/clipboard/dist/clipboard.min.js"></script>
+    <script>
+        var codeItem = document.getElementsByClassName('codeItem');
+        var clipboard = new ClipboardJS(codeItem);
+        clipboard.on('success', function(e) {
+            bootbox.alert("Copied to clipboard!!!");
+        });
+    </script>
 }
