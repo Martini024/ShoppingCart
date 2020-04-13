@@ -22,13 +22,13 @@ $('#signIn').on('submit', function (e) {
 		url: '/Auth/Login?' + 'userName=' + userName + '&password=' + password,
 		data: postBody,
 		success: function (res) {
-			localStorage.removeItem('cart');
 			if (res === '/Auth/Index') {
 				bootbox.alert('Invalid username or password!', function () {
 					/* your callback code */
 					window.location.href = res;
 				});
 			} else {
+				localStorage.removeItem('cart');
 				window.location.href = res;
 			}
 		},
