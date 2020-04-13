@@ -8,7 +8,7 @@
 }
 
 @section NavLink1 {
-    <a class="nav-link text-dark" asp-controller=@((bool)ViewData["isLoggedIn"] == true ? "Purchase" : "Auth") asp-action="Index">@((bool)ViewData["isLoggedIn"] ? "My Purchase" : "Login")</a>
+    <a class="nav-link text-dark" asp-controller=@((bool)ViewData["isLoggedIn"] == true ? "Purchase" : "Auth") asp-action="Index">@((bool)ViewData["isLoggedIn"] ? "My Purchases" : "Login")</a>
 }
 
 @section NavLink2 {
