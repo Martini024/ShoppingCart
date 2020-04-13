@@ -81,7 +81,7 @@ $(document).ready(function () {
 						'<div class="col-4"><h5 class="card-title">Price: </h5></div>'
 					);
 					var priceCol = $('<div class="col-8"></div>');
-					var price = $('<h5 class="card-title price"></h5>').text(cartDetail.product.price);
+					var price = $('<h5 class="card-title price"></h5>').text('$' + cartDetail.product.price);
 					priceCol.append(price);
 					priceRow.append(priceTag);
 					priceRow.append(priceCol);
@@ -176,16 +176,16 @@ $(document).ready(function () {
 					}
 					else if (changeTo == 0){
 						$(this).val(previousValue);
-						bootbox.alert("Please use remove button");
+						bootbox.alert("Please use the remove button");
 					}
 					else {
 						$(this).val(previousValue);
-						bootbox.alert("Cannot change quantity to that ~~~");
+						bootbox.alert("Invalid quantity amount");
 					}
 				}
 				else {
 					$(this).val(previousValue);
-					bootbox.alert("Cannot change quantity to that ~~~");
+					bootbox.alert("Invalid quantity amount");
 				}
 			});
 			$('.removeCartDetail').click(function () {
@@ -262,18 +262,18 @@ $('.updateQty').change(function () {
 				});
 			}
 		}
-		else if (changeTo === 0){
+		else if (changeTo == 0){
 			$(this).val(previousValue);
-			bootbox.alert("Please use remove button");
+			bootbox.alert("Please use the remove button");
 		}
 		else {
 			$(this).val(previousValue);
-			bootbox.alert("Cannot change quantity to that ~~~");
+			bootbox.alert("Invalid quantity amount");
 		}
 	}
 	else {
 		$(this).val(previousValue);
-		bootbox.alert("Cannot change quantity to that ~~~");
+		bootbox.alert("Invalid quantity amount");
 	}
 });
 
