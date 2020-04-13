@@ -8,7 +8,7 @@ $(document).ready(function () {
 					'<h1 class="mt-4">Sorry, nothing is in your cart.</h1>'
 				);
 			else {
-				$('#cart').append(
+				$('#cart').before(
 					'<div class="row my-4 justify-content-between mx-0"><button id="clearAll" class="btn btn-outline-danger my-2 my-sm-0 col-12 px-0" type="button">Clear All</button></div>'
 				);
 				$('#clearAll').click(function () {
@@ -95,7 +95,7 @@ $(document).ready(function () {
 						'<div class="input-group"></div>'
 					);
 					var qtyControl = $(
-						'<input type="number" min=0 class="form-control border-secondary updateQty" onClick="this.select();" />'
+						'<input type="number" min=1 class="form-control border-secondary updateQty" onClick="this.select();" />'
 					).val(cartDetail.qty);
 					var removeBtn = $(
 						'<div class="input-group-append removeCartDetail"><button class="btn btn-outline-danger" type="button">Remove</button></div>'
@@ -121,9 +121,13 @@ $(document).ready(function () {
 					$('#totalPrice').text('Total: $' + total);
 				}
 			}
+			// TODO: changeto cannot <= 0
 			$('.updateQty').change(function () {
 				var productId = $(this).closest('.product').data('value');
 				var changeTo = $(this).val();
+				// if (changeTo <= 0) {
+				// 	$(this).val();
+				// }
 				var user = $.cookie('User');
 				if (user == null) {
 					let cart = JSON.parse(localStorage.getItem('cart'));
