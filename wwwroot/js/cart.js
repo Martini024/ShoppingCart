@@ -5,7 +5,7 @@ $(document).ready(function () {
 			var cart = JSON.parse(localStorage.getItem('cart'));
 			if (cart.cartDetails.length === 0)
 				$('#cart').append(
-					'<h1 class="mt-4">Sorry, nothing is in your cart.</h1>'
+					'<h1 class="mt-4">Sorry, your cart is empty.</h1>'
 				);
 			else {
 				$('#cart').before(
