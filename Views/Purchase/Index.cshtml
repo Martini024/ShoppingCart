@@ -36,21 +36,69 @@ else
         {
             @foreach (var orderDetail in order.OrderDetails)
             {
-                <div class="row mt-4">
-                    <div class="card col-6 h-100 w-75 border-secondary p-0">
-                        <div class="card-header bg-transparent border-secondary">
-                            <img src="~/img/@orderDetail.Product.Image" class="card-img-top w-100"/>
-                        </div>
-                        <div class="card-body">
-                            <div class="h-30">
-                                <h5>@orderDetail.Product.Name</h5>
-                                <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@orderDetail.Product.Description</p>
+                <div class="row mt-4 border border-secondary rounded bg-light pl-4">
+                    <div class="col-5 h-100 my-auto">
+                        <div class="row">
+                            <div class="bg-transparent h-100 col-4 py-3">
+                                <img src="~/img/@orderDetail.Product.Image" class="card-img-top h-100"/>
+                            </div>
+                            <div class="card-body h-30 col-8">
+                                @* <div class="h-30"> *@
+                                    <h5>@orderDetail.Product.Name</h5>
+                                    <p class="card-text mb-0 overflow-hidden w-75 text-left pr-2">@orderDetail.Product.Description</p>
+                                @* </div> *@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
-                        <div class="container h-100 pl-5">
-                            <div class="row align-items-center justify-content-center h-100">
+                    <div class="col-7">
+                        <div class="container h-100 pl-5 py-2">
+                            <div class="col align-middle d-inline">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Purchased On: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <p>@formatDateTime(order.UtcDateTime)</p>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Quantity: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <p>@orderDetail.Qty</p>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <h5>Activation Code: </h5>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="dropdown">
+                                            @if (orderDetail.Qty > 1) 
+                                            {
+                                                <button class="btn btn-info dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                @orderDetail.Activations.First().Code
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    @for (int i = 1; i < orderDetail.Activations.Count(); i++)
+                                                    {
+                                                        <span class="dropdown-item">@orderDetail.Activations.ElementAt(i).Code</span>
+                                                    }
+                                                </div>
+                                            }
+                                            else 
+                                            {
+                                                <button class="btn btn-info  btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                @orderDetail.Activations.First().Code
+                                                </button>
+                                            }
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            
+                            @* <div class="row align-items-center justify-content-center h-100">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <h5>Purchased On: </h5>
@@ -84,7 +132,7 @@ else
                                         </div>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> *@
                         </div>
                     </div>
                 </div>

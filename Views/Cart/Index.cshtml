@@ -34,7 +34,7 @@ else if (Model == null || Model.CartDetails.Count() == 0) {
         @foreach (var cartDetail in Model.CartDetails)
         {
             <div class="row mt-4 product border border-secondary rounded bg-light pl-4" data-value=@cartDetail.ProductId>
-                <div class="col-5 h-100">
+                <div class="col-5 h-100 my-auto">
                     <div class="row">
                         <div class="bg-transparent h-100 col-4 py-3">
                             <img src="~/img/@cartDetail.Product.Image" class="card-img-top h-100"/>

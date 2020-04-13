@@ -14,7 +14,7 @@ $(document).ready(function () {
 						'<div class="row mt-4 product border border-secondary rounded bg-light pl-4"></div>'
 					).data('value', cartDetail.productId);
 
-					var card = $('<div class="col-5 h-100"></div>');
+					var card = $('<div class="col-5 h-100 my-auto"></div>');
 
 					var row = $('<div class="row"></div>');
 
