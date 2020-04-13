@@ -24,10 +24,10 @@
     }
 }
 
-@if (Model == null) {
+@if ((bool)ViewData["isLoggedIn"] == false) {
     <div class="container" id="cart"></div>
 }
-else if (Model.CartDetails.Count() == 0) {
+else if (Model == null || Model.CartDetails.Count() == 0) {
     <h1 class="mt-4">Sorry, nothing is in your cart.</h1>
 }else {
     <div class="container">
@@ -59,7 +59,7 @@ else if (Model.CartDetails.Count() == 0) {
                             </div>
                             <div class="col-8">
                                 <div class="input-group">
-                                    <input type="number" min=0 class="form-control border-secondary updateQty" value=@cartDetail.Qty />
+                                    <input type="number" min=1 class="form-control border-secondary updateQty" value=@cartDetail.Qty />
                                     <div class="input-group-append removeCartDetail">
                                         <button class="btn btn-outline-danger" type="button">Remove</button>
                                     </div>

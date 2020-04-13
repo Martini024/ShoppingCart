@@ -34,10 +34,14 @@ namespace ShoppingCart.Controllers
             {
                 string userId = GetCurrentUser();
                 Cart cart = _dbContext.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+                ViewData["isLoggedIn"] = true;
                 return View(cart);
             }
             else
+            {
+                ViewData["isLoggedIn"] = false;
                 return View();
+            }
         }
 
         [Authorize]
