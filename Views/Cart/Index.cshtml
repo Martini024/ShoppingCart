@@ -30,6 +30,9 @@
 else if (Model == null || Model.CartDetails.Count() == 0) {
     <h1 class="mt-4">Sorry, nothing is in your cart.</h1>
 }else {
+    <div class="row my-4 justify-content-between mx-0">
+        <button id="clearAll" class="btn btn-outline-danger my-2 my-sm-0 col-12 px-0" type="button">Clear All</button>
+    </div>
     <div class="container">
         @foreach (var cartDetail in Model.CartDetails)
         {
@@ -75,5 +78,6 @@ else if (Model == null || Model.CartDetails.Count() == 0) {
     </div>
 }
 @section Scripts{
+    <script src="~/lib/bootbox/bootbox.js"></script>
     <script src="~/js/cart.js"></script>
 }

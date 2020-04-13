@@ -8,6 +8,30 @@ $(document).ready(function () {
 					'<h1 class="mt-4">Sorry, nothing is in your cart.</h1>'
 				);
 			else {
+				$('#cart').append(
+					'<div class="row my-4 justify-content-between mx-0"><button id="clearAll" class="btn btn-outline-danger my-2 my-sm-0 col-12 px-0" type="button">Clear All</button></div>'
+				);
+				$('#clearAll').click(function () {
+					bootbox.confirm('Are you sure clear cart?', function (res) {
+						/* your callback code */
+						if (res) {
+							var user = $.cookie('User');
+							if (user == null) {
+								localStorage.removeItem('cart');
+								location.reload();
+							} else {
+								$.ajax({
+									type: 'POST',
+									contentType: 'application/json',
+									url: '/Cart/ClearAll',
+									success: function () {
+										location.reload();
+									},
+								});
+							}
+						}
+					});
+				});
 				for (let i = 0; i < cart.cartDetails.length; i++) {
 					const cartDetail = cart.cartDetails[i];
 					var product = $(
@@ -167,7 +191,7 @@ $(document).ready(function () {
 	}
 });
 
-var updateQty = $('.updateQty').change(function () {
+$('.updateQty').change(function () {
 	var productId = $(this).closest('.product').data('value');
 	var changeTo = $(this).val();
 	var user = $.cookie('User');
@@ -199,7 +223,7 @@ var updateQty = $('.updateQty').change(function () {
 	}
 });
 
-var removeCartDetail = $('.removeCartDetail').click(function () {
+$('.removeCartDetail').click(function () {
 	var productId = $(this).closest('.product').data('value');
 	var changeTo = 0;
 	var user = $.cookie('User');
@@ -229,4 +253,26 @@ var removeCartDetail = $('.removeCartDetail').click(function () {
 			},
 		});
 	}
+});
+
+$('#clearAll').click(function () {
+	bootbox.confirm('Are you sure clear cart?', function (res) {
+		/* your callback code */
+		if (res) {
+			var user = $.cookie('User');
+			if (user == null) {
+				localStorage.removeItem('cart');
+				location.reload();
+			} else {
+				$.ajax({
+					type: 'POST',
+					contentType: 'application/json',
+					url: '/Cart/ClearAll',
+					success: function () {
+						location.reload();
+					},
+				});
+			}
+		}
+	});
 });

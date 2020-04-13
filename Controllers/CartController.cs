@@ -123,6 +123,17 @@ namespace ShoppingCart.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        public void ClearAll()
+        {
+            var userId = GetCurrentUser();
+            var cart = _dbContext.Carts.Where(c => c.UserId == userId).First();
+            cart.Total = 0;
+            cart.CartDetails.Clear();
+            _dbContext.SaveChanges();
+        }
+
+        [Authorize]
         public IActionResult Checkout()
         {
             double total = 0;
