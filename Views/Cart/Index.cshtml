@@ -61,7 +61,7 @@ else if (Model == null || Model.CartDetails.Count() == 0) {
                             </div>
                             <div class="col-8">
                                 <div class="input-group">
-                                    <input type="number" min=1 class="form-control border-secondary updateQty" value=@cartDetail.Qty />
+                                    <input type="number" min=1 class="form-control border-secondary updateQty" value=@cartDetail.Qty onClick="this.select();" />
                                     <div class="input-group-append removeCartDetail">
                                         <button class="btn btn-outline-danger" type="button">Remove</button>
                                     </div>

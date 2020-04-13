@@ -71,7 +71,7 @@ $(document).ready(function () {
 						'<div class="input-group"></div>'
 					);
 					var qtyControl = $(
-						'<input type="number" min=0 class="form-control border-secondary updateQty" />'
+						'<input type="number" min=0 class="form-control border-secondary updateQty" onClick="this.select();" />'
 					).val(cartDetail.qty);
 					var removeBtn = $(
 						'<div class="input-group-append removeCartDetail"><button class="btn btn-outline-danger" type="button">Remove</button></div>'
