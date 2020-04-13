@@ -12,25 +12,27 @@ $(document).ready(function () {
 					'<div class="row my-4 justify-content-between mx-0"><button id="clearAll" class="btn btn-outline-danger my-2 my-sm-0 col-12 px-0" type="button">Clear All</button></div>'
 				);
 				$('#clearAll').click(function () {
-					bootbox.confirm('Are you sure clear cart?', function (res) {
-						/* your callback code */
-						if (res) {
-							var user = $.cookie('User');
-							if (user == null) {
-								localStorage.removeItem('cart');
-								location.reload();
-							} else {
-								$.ajax({
-									type: 'POST',
-									contentType: 'application/json',
-									url: '/Cart/ClearAll',
-									success: function () {
-										location.reload();
-									},
-								});
+					bootbox.confirm(
+						'Are you sure you want to clear cart?',
+						function (res) {
+							if (res) {
+								var user = $.cookie('User');
+								if (user == null) {
+									localStorage.removeItem('cart');
+									location.reload();
+								} else {
+									$.ajax({
+										type: 'POST',
+										contentType: 'application/json',
+										url: '/Cart/ClearAll',
+										success: function () {
+											location.reload();
+										},
+									});
+								}
 							}
 						}
-					});
+					);
 				});
 				for (let i = 0; i < cart.cartDetails.length; i++) {
 					const cartDetail = cart.cartDetails[i];
@@ -95,8 +97,10 @@ $(document).ready(function () {
 						'<div class="input-group"></div>'
 					);
 					var qtyControl = $(
-						'<input type="number" min=1 class="form-control border-secondary updateQty" onClick="this.select();" />'
+						'<input type="number" min=1 step="1" class="form-control border-secondary updateQty" onClick="this.select();" />'
 					).val(cartDetail.qty);
+					qtyControl.data('value', cartDetail.qty);
+
 					var removeBtn = $(
 						'<div class="input-group-append removeCartDetail"><button class="btn btn-outline-danger" type="button">Remove</button></div>'
 					);
@@ -109,9 +113,7 @@ $(document).ready(function () {
 					container.append(priceRow);
 					container.append(quantityRow);
 					details.append(container);
-					// qtyControl.html(quantity);
-					// price.after(quantity);
-					// price.html(details);
+					
 					product.append(card);
 					product.append(details);
 					$('#cart').append(product);
@@ -121,39 +123,53 @@ $(document).ready(function () {
 					$('#totalPrice').text('Total: $' + total);
 				}
 			}
-			// TODO: changeto cannot <= 0
 			$('.updateQty').change(function () {
 				var productId = $(this).closest('.product').data('value');
+				var previousValue = $(this).data('value');
 				var changeTo = $(this).val();
-				// if (changeTo <= 0) {
-				// 	$(this).val();
-				// }
-				var user = $.cookie('User');
-				if (user == null) {
-					let cart = JSON.parse(localStorage.getItem('cart'));
-					for (let i = 0; i < cart.cartDetails.length; i++) {
-						const cartDetail = cart.cartDetails[i];
-						if (cartDetail.productId === productId) {
-							cartDetail.qty = changeTo;
-							break;
+				if (Math.floor(changeTo) == changeTo && $.isNumeric(changeTo)) {
+					if (changeTo > 0) {
+						$(this).data("value", changeTo); 
+						var user = $.cookie('User');
+						if (user == null) {
+							let cart = JSON.parse(localStorage.getItem('cart'));
+							for (let i = 0; i < cart.cartDetails.length; i++) {
+								const cartDetail = cart.cartDetails[i];
+								if (cartDetail.productId === productId) {
+									cartDetail.qty = changeTo;
+									break;
+								}
+							}
+							localStorage.setItem('cart', JSON.stringify(cart));
+							location.reload();
+						} else {
+							$.ajax({
+								type: 'POST',
+								contentType: 'application/json',
+								url:
+									'/Cart/UpdateQty?' +
+									'productId=' +
+									productId +
+									'&changeTo=' +
+									changeTo,
+								success: function () {
+									location.reload();
+								},
+							});
 						}
 					}
-					localStorage.setItem('cart', JSON.stringify(cart));
-					location.reload();
-				} else {
-					$.ajax({
-						type: 'POST',
-						contentType: 'application/json',
-						url:
-							'/Cart/UpdateQty?' +
-							'productId=' +
-							productId +
-							'&changeTo=' +
-							changeTo,
-						success: function () {
-							location.reload();
-						},
-					});
+					else if (changeTo == 0){
+						$(this).val(previousValue);
+						bootbox.alert("Please use remove button");
+					}
+					else {
+						$(this).val(previousValue);
+						bootbox.alert("Cannot change quantity to that ~~~");
+					}
+				}
+				else {
+					$(this).val(previousValue);
+					bootbox.alert("Cannot change quantity to that ~~~");
 				}
 			});
 			$('.removeCartDetail').click(function () {
@@ -197,33 +213,51 @@ $(document).ready(function () {
 
 $('.updateQty').change(function () {
 	var productId = $(this).closest('.product').data('value');
+	var previousValue = $(this).data('value');
 	var changeTo = $(this).val();
-	var user = $.cookie('User');
-	if (user == null) {
-		let cart = JSON.parse(localStorage.getItem('cart'));
-		for (let i = 0; i < cart.cartDetails.length; i++) {
-			const cartDetail = cart.cartDetails[i];
-			if (cartDetail.productId === productId) {
-				cartDetail.qty = changeTo;
-				break;
+	if (Math.floor(changeTo) == changeTo && $.isNumeric(changeTo)) {
+		if (changeTo > 0) {
+			$(this).data("value", changeTo); 
+			var user = $.cookie('User');
+			if (user == null) {
+				let cart = JSON.parse(localStorage.getItem('cart'));
+				for (let i = 0; i < cart.cartDetails.length; i++) {
+					const cartDetail = cart.cartDetails[i];
+					if (cartDetail.productId === productId) {
+						cartDetail.qty = changeTo;
+						break;
+					}
+				}
+				localStorage.setItem('cart', JSON.stringify(cart));
+				location.reload();
+			} else {
+				$.ajax({
+					type: 'POST',
+					contentType: 'application/json',
+					url:
+						'/Cart/UpdateQty?' +
+						'productId=' +
+						productId +
+						'&changeTo=' +
+						changeTo,
+					success: function () {
+						location.reload();
+					},
+				});
 			}
 		}
-		localStorage.setItem('cart', JSON.stringify(cart));
-		location.reload();
-	} else {
-		$.ajax({
-			type: 'POST',
-			contentType: 'application/json',
-			url:
-				'/Cart/UpdateQty?' +
-				'productId=' +
-				productId +
-				'&changeTo=' +
-				changeTo,
-			success: function () {
-				location.reload();
-			},
-		});
+		else if (changeTo === 0){
+			$(this).val(previousValue);
+			bootbox.alert("Please use remove button");
+		}
+		else {
+			$(this).val(previousValue);
+			bootbox.alert("Cannot change quantity to that ~~~");
+		}
+	}
+	else {
+		$(this).val(previousValue);
+		bootbox.alert("Cannot change quantity to that ~~~");
 	}
 });
 
@@ -260,8 +294,7 @@ $('.removeCartDetail').click(function () {
 });
 
 $('#clearAll').click(function () {
-	bootbox.confirm('Are you sure clear cart?', function (res) {
-		/* your callback code */
+	bootbox.confirm('Are you sure you want to clear cart?', function (res) {
 		if (res) {
 			var user = $.cookie('User');
 			if (user == null) {
