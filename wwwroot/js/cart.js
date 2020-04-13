@@ -11,33 +11,35 @@ $(document).ready(function () {
 				for (let i = 0; i < cart.cartDetails.length; i++) {
 					const cartDetail = cart.cartDetails[i];
 					var product = $(
-						'<div class="row mt-4 product"></div>'
+						'<div class="row mt-4 product border border-secondary rounded bg-light pl-4"></div>'
 					).data('value', cartDetail.productId);
 
-					var card = $(
-						'<div class="card col-6 h-100 w-75 border-secondary p-0"></div>'
-					);
+					var card = $('<div class="col-5 h-100"></div>');
+
+					var row = $('<div class="row"></div>');
 
 					var cardHeader = $(
-						'<div class="card-header bg-transparent border-secondary h-75"></div>'
+						'<div class="bg-transparent h-100 col-4 py-3"></div>'
 					);
 					var img = $(
 						'<img src="" class="card-img-top h-100"/>'
 					).attr('src', cartDetail.product.image);
 					cardHeader.append(img);
-					card.append(cardHeader);
+					row.append(cardHeader);
 
-					var cardBody = $('<div class="card-body h-30"></div>');
+					var cardBody = $(
+						'<div class="card-body h-30 col-8"></div>'
+					);
 					var cardTitle = $('<h5 class="card-title"></h5>').text(
 						cartDetail.product.name
 					);
 					var cardText = $(
-						'<p class="card-text mb-0 overflow-hidden w-75 text-left pr-2"></p>'
+						'<p class="card-text mb-0 overflow-hidden text-left pr-2"></p>'
 					).text(cartDetail.product.description);
 					cardBody.append(cardTitle);
 					cardBody.append(cardText);
-
-					card.append(cardBody);
+					row.append(cardBody);
+					card.append(row);
 
 					var details = $('<div class="col-6"></div>');
 					var container = $(
