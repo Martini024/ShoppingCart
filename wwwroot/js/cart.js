@@ -67,34 +67,48 @@ $(document).ready(function () {
 					row.append(cardBody);
 					card.append(row);
 
-					var details = $('<div class="col-6"></div>');
+					var details = $('<div class="col-7"></div>');
 					var container = $(
 						'<div class="container h-100 pl-5"></div>'
 					);
 
+					var col = $('<div class="col align-middle d-inline"></div');
+
 					var priceRow = $(
-						'<div class="row h-50 align-content-end"></div>'
+						'<div class="row"></div>'
 					);
 					var priceTag = $(
 						'<div class="col-4"><h5 class="card-title">Price: </h5></div>'
 					);
 					var priceCol = $('<div class="col-8"></div>');
-					var price = $('<h5 class="card-title price"></h5>').text(
-						'$' + cartDetail.product.price * cartDetail.qty
-					);
+					var price = $('<h5 class="card-title price"></h5>').text(cartDetail.product.price);
 					priceCol.append(price);
 					priceRow.append(priceTag);
 					priceRow.append(priceCol);
 
+					var totalCostRow = $(
+						'<div class="row"></div>'
+					);
+					var totalCostTag = $(
+						'<div class="col-4"><h5 class="card-title">Total: </h5></div>'
+					);
+					var totalCostCol = $('<div class="col-8"></div>');
+					var totalCost = $('<h5 class="card-title"></h5>').text(
+						'$' + cartDetail.product.price * cartDetail.qty
+					);
+					totalCostCol.append(totalCost);
+					totalCostRow.append(totalCostTag);
+					totalCostRow.append(totalCostCol);
+
 					var quantityRow = $(
-						'<div class="row h-50 align-content-start"></div>'
+						'<div class="row"></div>'
 					);
 					var quantityTag = $(
 						'<div class="col-4 my-auto"><h5 class="card-title my-0">Quantity: </h5></div>'
 					);
 					var quantityCol = $('<div class="col-8"></div>');
 					var quantityInputGroup = $(
-						'<div class="input-group"></div>'
+						'<div class="input-group input-group-sm"></div>'
 					);
 					var qtyControl = $(
 						'<input type="number" min=1 step="1" class="form-control border-secondary updateQty" onClick="this.select();" />'
@@ -110,8 +124,10 @@ $(document).ready(function () {
 					quantityRow.append(quantityTag);
 					quantityRow.append(quantityCol);
 
-					container.append(priceRow);
-					container.append(quantityRow);
+					col.append(priceRow);
+					col.append(totalCostRow)
+					col.append(quantityRow);
+					container.append(col);
 					details.append(container);
 					
 					product.append(card);
