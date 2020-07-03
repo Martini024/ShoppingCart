@@ -17,6 +17,12 @@ After cloning the repository from github, run following command to restore depen
 dotnet restore
 ```
 
+Run following command to start local server:
+
+```bash
+dotnet run
+```
+
 ## Features
 
 -   Customized double-hashed password middleware to secure the website
